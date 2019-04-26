@@ -1,0 +1,170 @@
+use strict';
+module.exports = function (sequelize, DataTypes) {
+  var User = sequelize.define('User', {
+    username: DataTypes.STRING,
+    password: DataTypes.STRING
+  }, {
+      //classMethod guarantees the password provided by the user matches what's in the db
+      classMethods: {
+        associate: function (models) {
+          //associate every tweet to having one author (User)
+          models.Tweet.hasOne(models.User, { as: "Author" });
+          models.Tweet#setAuthor(anAuthor);
+        }
+      }
+    });
+  return User;
+};
+//original
+'use strict';
+module.exports = function(sequelize, DataTypes) {
+  var Tweet = sequelize.define('Tweet', {
+    tweet: DataTypes.TEXT
+  }, {
+    classMethods: {
+      associate: function(models) {
+        // associations can be defined here
+        //creating a one-to-many relationship from user->tweets
+        models.User.hasMany(models.Tweet, {as: 'tweets'});
+      }
+    }
+  });
+  return Tweet;
+};
+
+
+// tweet.js model
+'use strict';
+module.exports = function(sequelize, DataTypes) {
+           var Tweet = sequelize.define('Tweet', {
+           tweet: DataTypes.TEXT
+             }, {
+               classMethods: {
+                  associate: function(models) {
+                  Tweet.belongsTo(models.User, {as: 'tweets'})
+             }
+          }
+     });
+      return Tweet;
+ };
+
+
+//user.js
+   module.exports = function (sequelize, DataTypes) {
+        var User = sequelize.define('Users', {
+                  username: DataTypes.STRING,
+                  password: DataTypes.STRING
+          }, {
+   //classMethod guarantees the password provided by the user matches     what's in the db
+          classMethods: {
+                  associate: function (models) {
+                  User.hasMany(models.Tweet, {as: "Author"})
+
+                }
+           }
+       });
+          return User;
+    };
+
+
+
+
+
+    ///////
+
+    var user = sequelize.define('user', {
+    name: {
+        Sequelize.STRING(255)
+    },
+    email: {
+        type: Sequelize.STRING(255),
+        unique: true,
+        validate: {
+            isEmail: true
+        }
+    }
+});
+
+var Role = sequelize.define('role', {
+    name: {
+        Sequelize.ENUM('ER', 'ALL', 'DL')
+    },
+    description: {
+        type: Sequelize.TEXT
+    }
+});
+
+var UserRole = sequelize.define('user_role', {
+    id: {
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
+    name: {
+        type: Sequelize.ENUM('Admin', 'Staff', 'Customer', 'Owner')
+    }
+});
+
+User.belongsToMany(Role, { as: 'Roles', through: { model: UserRole, unique: false }, foreignKey: 'user_id' });
+Role.belongsToMany(User, { as: 'Users', through: { model: UserRole, unique: false }, foreignKey: 'role_id' });
+
+//////starting in models
+module.exports = function(sequelize, DataTypes) {
+  return Food = sequelize.define("Book", {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      allowNull: false,
+      autoIncrement: true,
+      unique: true
+    }
+  });
+}
+
+//
+module.exports = function(sequelize, DataTypes) {
+  return Food = sequelize.define("Article", {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      allowNull: false,
+      autoIncrement: true,
+      unique: true
+    }
+  });
+}
+//
+module.exports = function(sequelize, DataTypes) {
+  return Food = sequelize.define("BookArticles", {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      allowNull: false,
+      autoIncrement: true,
+      unique: true
+    },
+   bookId: {
+      type: DataTypes.INTEGER,
+      references: 'Book',
+      referencesKey: 'id',
+      allowNull: false
+    },
+    ArticleId: {
+      type: DataTypes.INTEGER,
+      references: 'Article',
+      referencesKey: 'id',
+      allowNull: false
+    },
+  });
+}
+
+// index js
+m.BookArticles.belongsTo(m.Book);
+m.Book.hasMany(m.Article, {through: m.BookArticles});
+
+
+m.BookArticles.belongsTo(m.Article);
+m.Article.hasMany(m.Books, {through: m.BookArticles});
+
+m.Book.belongsToMany(m.Article, {through: m.BookArticles});
+m.Article.belongsToMany(m.Books, {through: m.BookArticles});
